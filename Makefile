@@ -15,10 +15,11 @@ help:
 	@echo ""
 	@echo "$(YELLOW)📦 Available Stacks:$(NC)"
 	@echo "  • postgres   (Port 5432)  - PostgreSQL 15-alpine"
-	@echo "  • mysql      (Port 3306)  - MySQL 8.0-alpine"
+	@echo "  • mysql      (Port 3306)  - MySQL lattest"
 	@echo "  • mongodb    (Port 27017) - MongoDB 7.0"
 	@echo "  • redis      (Port 6379)  - Redis 7-alpine"
 	@echo "  • minio      (Port 9000)  - MinIO S3-compatible storage"
+	@echo "  • jupyter    (Port 8888)  - Jupyter Lab with data science libraries"
 	@echo ""
 	@echo "$(YELLOW)🚀 Usage:$(NC)"
 	@echo "  $(GREEN)make up-<stack>$(NC)      Start a service (e.g., make up-postgres)"
@@ -209,6 +210,37 @@ logs-minio:
 	@docker-compose logs -f minio
 
 restart-minio: down-minio up-minio
+
+# === Jupyter ===
+up-jupyter:
+	@echo "$(BLUE)Starting Jupyter Lab...$(NC)"
+	@docker-compose up -d jupyter
+	@echo "$(GREEN)✓ Jupyter Lab started$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Access Jupyter Lab:$(NC)"
+	@echo "  URL:   http://localhost:8888"
+	@echo "  Token: devstack"
+	@echo ""
+	@echo "$(YELLOW)Pre-installed Libraries:$(NC)"
+	@echo "  • NumPy, Pandas, Matplotlib"
+	@echo "  • Scikit-learn, SciPy, Statsmodels"
+	@echo "  • Plotly, Seaborn, Bokeh"
+	@echo "  • And many more data science tools"
+	@echo ""
+
+down-jupyter:
+	@echo "$(BLUE)Stopping Jupyter Lab...$(NC)"
+	@docker-compose stop jupyter
+	@echo "$(GREEN)✓ Jupyter Lab stopped$(NC)"
+
+status-jupyter:
+	@echo "$(BLUE)Jupyter Lab Status:$(NC)"
+	@docker-compose ps jupyter || echo "$(RED)Jupyter Lab is not running$(NC)"
+
+logs-jupyter:
+	@docker-compose logs -f jupyter
+
+restart-jupyter: down-jupyter up-jupyter
 
 # === Bulk Operations ===
 up-all:

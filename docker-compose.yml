@@ -93,6 +93,23 @@ services:
     networks:
       - devstack
 
+  jupyter:
+    image: jupyter/datascience-notebook:latest
+    container_name: devstack_jupyter
+    ports:
+      - "8888:8888"
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      GRANT_SUDO: "yes"
+    command: start-notebook.sh --NotebookApp.token=devstack --NotebookApp.password='' --NotebookApp.allow_origin='*'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - devstack
+
 volumes:
   devstack_postgres_data:
     driver: local

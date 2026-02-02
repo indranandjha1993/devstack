@@ -35,10 +35,11 @@ That's it. Your services are running with persistent data.
 | Stack | Image | Port | Purpose |
 |-------|-------|------|---------|
 | **postgres** | postgres:15-alpine | 5432 | Relational database |
-| **mysql** | mysql:8.0-alpine | 3306 | MySQL database |
+| **mysql** | mysql:lattest | 3306 | MySQL database |
 | **mongodb** | mongo:7.0 | 27017 | NoSQL document database |
 | **redis** | redis:7-alpine | 6379 | In-memory cache/store |
 | **minio** | minio/latest | 9000/9001 | S3-compatible object storage |
+| **jupyter** | jupyter/datascience-notebook | 8888 | Jupyter Lab with data science tools |
 
 All services:
 - ✅ Persist data across restarts (in Docker volumes)
@@ -169,6 +170,18 @@ S3 API:   http://localhost:9000
 Console:  http://localhost:9001
 User:     devstack
 Password: devstackpassword
+```
+
+### Jupyter Lab
+```
+URL:      http://localhost:8888
+Token:    devstack
+
+Pre-installed:
+  • NumPy, Pandas, Matplotlib, Seaborn
+  • Scikit-learn, SciPy, Statsmodels
+  • Plotly, Bokeh, ggplot
+  • And 100+ more data science libraries
 ```
 
 ## 💾 Data Persistence
