@@ -1,112 +1,112 @@
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:${POSTGRES_IMAGE_TAG}
     container_name: devstack_postgres
     environment:
-      POSTGRES_DB: devstack
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - devstack_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: ${HEALTH_CHECK_INTERVAL}s
+      timeout: ${HEALTH_CHECK_TIMEOUT}s
+      retries: ${HEALTH_CHECK_RETRIES}
     networks:
       - devstack
 
   mysql:
-    image: mysql
+    image: ${MYSQL_IMAGE}
     container_name: devstack_mysql
     environment:
-      MYSQL_DATABASE: devstack
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: devstack
-      MYSQL_PASSWORD: devstack
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
       - devstack_mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: ${HEALTH_CHECK_INTERVAL}s
+      timeout: ${HEALTH_CHECK_TIMEOUT}s
+      retries: ${HEALTH_CHECK_RETRIES}
     networks:
       - devstack
 
   mongodb:
-    image: mongo:7.0
+    image: mongo:${MONGODB_IMAGE_TAG}
     container_name: devstack_mongodb
     environment:
-      MONGO_INITDB_DATABASE: devstack
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - "27017:27017"
+      - "${MONGODB_PORT}:27017"
     volumes:
       - devstack_mongodb_data:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: ${HEALTH_CHECK_INTERVAL}s
+      timeout: ${HEALTH_CHECK_TIMEOUT}s
+      retries: ${HEALTH_CHECK_RETRIES}
     networks:
       - devstack
 
   redis:
-    image: redis:7-alpine
+    image: redis:${REDIS_IMAGE_TAG}
     container_name: devstack_redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
     volumes:
       - devstack_redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: ${HEALTH_CHECK_INTERVAL}s
+      timeout: ${HEALTH_CHECK_TIMEOUT}s
+      retries: ${HEALTH_CHECK_RETRIES}
     command: redis-server --appendonly yes
     networks:
       - devstack
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio:${MINIO_IMAGE_TAG}
     container_name: devstack_minio
     environment:
-      MINIO_ROOT_USER: devstack
-      MINIO_ROOT_PASSWORD: devstackpassword
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
     volumes:
       - devstack_minio_data:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: ${HEALTH_CHECK_INTERVAL}s
+      timeout: ${HEALTH_CHECK_TIMEOUT}s
+      retries: ${HEALTH_CHECK_RETRIES}
     command: minio server /data --console-address ":9001"
     networks:
       - devstack
 
   jupyter:
-    image: jupyter/datascience-notebook:latest
+    image: jupyter/datascience-notebook:${JUPYTER_IMAGE_TAG}
     container_name: devstack_jupyter
     ports:
-      - "8888:8888"
+      - "${JUPYTER_PORT}:8888"
     environment:
       JUPYTER_ENABLE_LAB: "yes"
       GRANT_SUDO: "yes"
-    command: start-notebook.sh --NotebookApp.token=devstack --NotebookApp.password='' --NotebookApp.allow_origin='*'
+    command: start-notebook.sh --NotebookApp.token=${JUPYTER_TOKEN} --NotebookApp.password='' --NotebookApp.allow_origin='*'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8888/api"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: ${HEALTH_CHECK_INTERVAL}s
+      timeout: ${HEALTH_CHECK_TIMEOUT}s
+      retries: ${HEALTH_CHECK_RETRIES}
     networks:
       - devstack
 

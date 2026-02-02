@@ -12,6 +12,16 @@ DevStack is a dead-simple way to manage local development infrastructure using D
 - `make` command available
 - Terminal/shell access
 
+### Setup (First Time)
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env to customize versions and credentials (optional)
+# Default values work fine for local development
+```
+
 ### 30-Second Setup
 
 ```bash
@@ -46,6 +56,56 @@ All services:
 - ✅ Include health checks
 - ✅ Use standard ports
 - ✅ Have sensible local dev credentials
+
+## ⚙️ Configuration (.env)
+
+DevStack uses a `.env` file for easy customization without editing Docker Compose.
+
+### Setup
+
+```bash
+# Create .env from example (first time only)
+cp .env.example .env
+
+# Edit if you want to customize
+nano .env
+```
+
+### What Can You Configure?
+
+- **Service Versions**: Change PostgreSQL from 15 to 16, MySQL from 8.0 to 5.7, etc.
+- **Database Credentials**: Customize usernames and passwords
+- **Ports**: Map services to different ports if needed (e.g., 15432 instead of 5432)
+- **Health Checks**: Adjust intervals and timeouts
+
+### Common Customizations
+
+**Use PostgreSQL 16 instead of 15:**
+```env
+POSTGRES_IMAGE_TAG=16-alpine
+```
+
+**Change PostgreSQL password:**
+```env
+POSTGRES_PASSWORD=my_secure_password_here
+```
+
+**Run MySQL on port 13306 instead of 3306:**
+```env
+MYSQL_PORT=13306
+```
+
+**Use different Redis version:**
+```env
+REDIS_IMAGE_TAG=6-alpine
+```
+
+### Security Notes
+
+- ⚠️ **`.env` is NOT tracked by git** (see `.gitignore`) — safe for sensitive data
+- 🔒 **Default credentials are for development only** — change them in production
+- 📋 **`.env.example` IS tracked** — shows all available options
+- 🔐 **Keep `.env` file permissions restricted** — `chmod 600 .env`
 
 ## 📖 Commands
 
