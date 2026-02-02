@@ -1,0 +1,110 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: devstack_postgres
+    environment:
+      POSTGRES_DB: devstack
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - devstack_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - devstack
+
+  mysql:
+    image: mysql:8.0-alpine
+    container_name: devstack_mysql
+    environment:
+      MYSQL_DATABASE: devstack
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: devstack
+      MYSQL_PASSWORD: devstack
+    ports:
+      - "3306:3306"
+    volumes:
+      - devstack_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - devstack
+
+  mongodb:
+    image: mongo:7.0
+    container_name: devstack_mongodb
+    environment:
+      MONGO_INITDB_DATABASE: devstack
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - devstack_mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - devstack
+
+  redis:
+    image: redis:7-alpine
+    container_name: devstack_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - devstack_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+    networks:
+      - devstack
+
+  minio:
+    image: minio/minio:latest
+    container_name: devstack_minio
+    environment:
+      MINIO_ROOT_USER: devstack
+      MINIO_ROOT_PASSWORD: devstackpassword
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - devstack_minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: minio server /data --console-address ":9001"
+    networks:
+      - devstack
+
+volumes:
+  devstack_postgres_data:
+    driver: local
+  devstack_mysql_data:
+    driver: local
+  devstack_mongodb_data:
+    driver: local
+  devstack_redis_data:
+    driver: local
+  devstack_minio_data:
+    driver: local
+
+networks:
+  devstack:
+    driver: bridge
