@@ -19,7 +19,7 @@ services:
       - devstack
 
   mysql:
-    image: mysql:8.0-alpine
+    image: mysql
     container_name: devstack_mysql
     environment:
       MYSQL_DATABASE: devstack
