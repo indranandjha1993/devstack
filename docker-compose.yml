@@ -110,7 +110,7 @@ services:
     networks:
       - devstack
     volumes:
-      - ./jupyter_data:/home/jovyan/work
+      - ./jupyter_data:/home/jovyan
 
 volumes:
   devstack_postgres_data:
